@@ -6,7 +6,7 @@ import streamlit as st
 st.title("Reservoirs Data")
 
 #reading the csv file
-df = pd.read_csv("../data/reservoirs.csv")
+df = pd.read_csv("../../data/reservoirs.csv")
 
 #changing the names on the columns
 df.columns = [
