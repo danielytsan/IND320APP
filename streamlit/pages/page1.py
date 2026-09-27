@@ -26,7 +26,7 @@ for column in month_data.columns:
 
 st.dataframe(
     pd.DataFrame(rows),
-    colmn_config = {
+    column_config = {
         "First month": st.column_config.LineChartColumn(
             "First month", width = "large"
         )
