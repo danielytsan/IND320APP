@@ -3,6 +3,9 @@ import pandas as pd
 
 st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "expanded")
 
+st.title("Reservoirs Data")
+st.header("Here you can see the fill level for each area over time")
+
 if "df" not in st.session_state:
     st.info("Open the main page first to load the data")
     st.stop()
