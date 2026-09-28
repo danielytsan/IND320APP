@@ -17,7 +17,7 @@ df["Area label"] = (df["Area"] + " " + df["Area number"].astype(str))
 
 plot_data = df.pivot(
     index = "Date",
-    columns = "Area",
+    columns = "Area label",
     values = "Fill level (%)"
 )
 
