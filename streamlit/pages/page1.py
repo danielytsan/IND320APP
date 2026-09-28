@@ -2,8 +2,8 @@ import streamlit as st
 import pandas as pd
 
 st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "expanded")
-df = pd.read_csv("data/reservoirs.csv")
-st.dataframe(df)
+
+df = st.session_state["df"]
 
 df["Date"] = pd.to_datetime(df["dato_Id"])
 df = df.sort_values("Date")
