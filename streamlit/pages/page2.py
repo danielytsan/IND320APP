@@ -13,6 +13,8 @@ df = df.sort_values("Date")
 
 df["Fill level (%)"] = df["Fill level"] * 100
 
+df["Area label"] = (df["Area"] + " " + df["Area number"].astype(str))
+
 plot_data = df.pivot(
     index = "Date",
     columns = "Area",
