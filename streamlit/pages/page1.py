@@ -3,7 +3,10 @@ import pandas as pd
 
 st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "expanded")
 
-df = st.session_state["df"]
+if "df" not in st.session_state:
+    st.info("Open the main page first to load the data")
+    st.stop()
+df = st.session_state["df"].copy()
 
 df["Date"] = pd.to_datetime(df["dato_Id"])
 df = df.sort_values("Date")
