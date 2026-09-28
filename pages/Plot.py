@@ -6,18 +6,21 @@ st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "exp
 st.title("Reservoirs Data")
 st.header("Here you can see the fill level for each area over time")
 
+#loding the data from main page and checking if it is available
 if "df" not in st.session_state:
     st.info("Open the main page first to load the data")
     st.stop()
 df = st.session_state["df"].copy()
 
+#converting the date column to datetime and sorting the dataframe by date
 df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values("Date")
 
+#chaning the fill level to percentage and creating a new column with area and area number
 df["Fill level (%)"] = df["Fill level"] * 100
-
 df["Area label"] = (df["Area"] + " " + df["Area number"].astype(str))
 
+#creating a plot showing the fill level for each area over time
 plot_data = df.pivot(
     index = "Date",
     columns = "Area label",
@@ -30,6 +33,7 @@ st.line_chart(
     y_label = "Fill level (%)"
 )
 
+#select boc for column and a slider for month
 select = st.selectbox("Select column",
                       ["All columns"] + df.columns.tolist())
 

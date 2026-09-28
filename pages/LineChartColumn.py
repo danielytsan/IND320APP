@@ -6,19 +6,23 @@ st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "exp
 st.title("Reservoirs Data")
 st.header("Here you can see the data for the first month")
 
+#loding the data from main page and checking if it is available
 if "df" not in st.session_state:
     st.info("Open the main page first to load the data")
     st.stop()
 df = st.session_state["df"].copy()
 
+#converting the date column to datetime and sorting the dataframe by date
 df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values("Date")
 
+#getting the first month and filtering the dataframe to only include data from that month
 first_month = df["Date"].min().to_period("M")
 month_data = df[df["Date"].dt.to_period("M") == first_month]
 
 rows = []
 
+#making a column for each column and getting the first value and the values for the first month
 for column in month_data.columns:
     values = month_data[column]
 
@@ -30,6 +34,7 @@ for column in month_data.columns:
                         else None)
     })
 
+#displaying the first month values
 st.dataframe(
     pd.DataFrame(rows),
     column_config = {
