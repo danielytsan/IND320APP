@@ -12,6 +12,20 @@ st.write("Welcome to the main page of my streamlit app" \
 @st.cache_data
 def get_data():
     df = pd.read_csv("data/reservoirs.csv")
+
+    df.columns = [
+    "Date",
+    "Area",
+    "Area number",
+    "Year",
+    "Week",
+    "Fill level",
+    "Capacity in TWh",
+    "Stored energy in TWh",
+    "Next publication",
+    "Previous week fill level",
+    "Fill level change"
+    ]
     return df
 
 st.session_state["df"] = get_data()

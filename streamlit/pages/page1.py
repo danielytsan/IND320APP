@@ -8,7 +8,7 @@ if "df" not in st.session_state:
     st.stop()
 df = st.session_state["df"].copy()
 
-df["Date"] = pd.to_datetime(df["dato_Id"])
+df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values("Date")
 
 first_month = df["Date"].min().to_period("M")
