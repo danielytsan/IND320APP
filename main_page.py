@@ -5,7 +5,7 @@ from pathlib import Path
 #configuring the page
 st.set_page_config(page_title = "Main page", initial_sidebar_state = "expanded")
 
-st.title("Data")
+st.title("Reservoirs Data")
 st.header("This is the main page")
 st.write("Welcome to the main page of my streamlit app" \
 "on the left side you can navigate between the pages" \

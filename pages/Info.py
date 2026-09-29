@@ -10,3 +10,7 @@ if "df" not in st.session_state:
     st.info("Open the main page first to load the data")
     st.stop()
 df = st.session_state["df"].copy()
+
+
+st.write("This page is still under development, but it will contain information" \
+"in later parts of the projct")
