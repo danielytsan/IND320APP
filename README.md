@@ -23,7 +23,7 @@ IND320APP/
 
 ## Data
 
-In this project we are using `data/reservoirs.csv` where we reed this using pandas
+In this project we are using `reservoirs.csv` where we reed this using pandas
 
 Streamlit is containing 4 pages in total:
 1. Main page
