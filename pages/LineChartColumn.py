@@ -19,18 +19,19 @@ df = df.sort_values("Date")
 #getting the first month and filtering the dataframe to only include data from that month
 first_month = df["Date"].min().to_period("M")
 month_data = df[df["Date"].dt.to_period("M") == first_month]
-
-rows = [
-    "Fill level",
-    "Capacity in twh",
-    "Stored energy in twh",
-    "Next publcation",
-    "Previous week fill level",
-    "Fill level change"
+columns_to_plot = [
+        "Fill level",
+        "Capacity in twh",
+        "Stored energy in twh",
+        "Next publcation",
+        "Previous week fill level",
+        "Fill level change"
 ]
 
+rows = []
+
 #making a column for each column and getting the first value and the values for the first month
-for column in month_data.columns:
+for column in columns_to_plot:
     values = month_data[column]
 
     rows.append({
