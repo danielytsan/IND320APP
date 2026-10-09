@@ -20,7 +20,14 @@ df = df.sort_values("Date")
 first_month = df["Date"].min().to_period("M")
 month_data = df[df["Date"].dt.to_period("M") == first_month]
 
-rows = []
+rows = [
+    "Fill level",
+    "Capacity in twh",
+    "Stored energy in twh",
+    "Next publcation",
+    "Previous week fill level",
+    "Fill level change"
+]
 
 #making a column for each column and getting the first value and the values for the first month
 for column in month_data.columns:
