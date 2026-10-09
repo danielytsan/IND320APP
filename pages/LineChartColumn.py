@@ -37,9 +37,7 @@ for column in columns_to_plot:
     rows.append({
         "Column": column,
         "First value": str(values.iloc[0]),
-        "First month": (values.tolist()
-                        if pd.api.types.is_numeric_dtype(values)
-                        else None)
+        "First month": values.tolist(),
     })
 
 #displaying the first month values
