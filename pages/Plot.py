@@ -20,26 +20,50 @@ df = df.sort_values("Date")
 df["Fill level (%)"] = df["Fill level"] * 100
 df["Area label"] = (df["Area"] + " " + df["Area number"].astype(str))
 
-#creating a plot showing the fill level for each area over time
-plot_data = df.pivot(
-    index = "Date",
-    columns = "Area label",
-    values = "Fill level (%)"
-)
-
-st.line_chart(
-    plot_data,
-    x_label = "Date",
-    y_label = "Fill level (%)"
-)
-
 #select boc for column and a slider for month
-select = st.selectbox("Select column",
+selected_column = st.selectbox("Select column",
                       ["All columns"] + df.columns.tolist())
 
 months = sorted(df["Date"].dt.strftime("%Y-%m").unique())
 
+if not months:
+    st.info("No data available")
+    st.stop()
+
 start_month, end_month = st.select_slider(
     "Select month",
     options = months,
-    value = (months[0], months[0]))
+    value = (months[0], months[-1]))
+
+#filter dates
+date_month = df["Date"].dt.strftime("%Y-%m")
+
+filtered_df = df[
+    date_month.between(start_month, end_month)
+]
+
+#plot all numeric columns or selected column
+if selected_column == "All columns":
+    plot_data = (
+        filtered_df
+        .set_index("Date")
+        .select_dtypes(include = "number")
+    )
+
+    st.line_chart(plot_data, x_label = "Date", y_label = "Value")
+
+elif pd.api.types.is_numeric_dtype(df[selected_column]):
+    plot_data = filtered_df.pivot_table(
+        index = "Date",
+        columns = "Area label",
+        values = selected_column
+    )
+
+    st.line_chart(
+        plot_data, 
+        x_label = "Date",
+        y_label = selected_column
+    )
+
+else:
+    st.info("Select a numeric column to plot")
