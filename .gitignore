@@ -219,3 +219,6 @@ __marimo__/
 
 # DS store
 .DS_Store
+
+#api keys
+.streamlit/secrets.toml
