@@ -3,7 +3,4 @@ pandas
 matplotlib
 pymongo[srv]
 requests
-time
-sys
 pyspark
-os
