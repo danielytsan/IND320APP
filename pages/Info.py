@@ -26,7 +26,7 @@ if df_flows.empty:
     st.info("No data available in MongoDB")
     st.stop()
 
-df_flows["Date"] = pd.to_datetime(df_flows["Date"], utc = True).dt.tz_convert("Europe/Oslo")
+df_flows["date"] = pd.to_datetime(df_flows["date"], utc = True).dt.tz_convert("Europe/Oslo")
 
 left, right = st.columns(2)
 
@@ -45,7 +45,7 @@ with left:
     total_flows.plot.pie(autopct='%1.1f%%', 
                         startangle=90, 
                         figsize=(5, 5), 
-                        title=f"Total Flows between Norway and {connection} in {year}")
+                        title=f"Total Flows between Norway and {connections} in {year}")
     plt.show()
 
 
@@ -82,8 +82,8 @@ with right:
         month_numbers = [months[month] for month in selected_month]
 
         selected_data = df_flows[df_flows["country"] == connections 
-                                 & df_flows["Date"].dt.year == year 
-                                 & df_flows["Date"].dt.month.isin(month_numbers)].copy()
+                                 & df_flows["date"].dt.year == year 
+                                 & df_flows["date"].dt.month.isin(month_numbers)].copy()
 
         if selected_data.empty:
             st.info("No data available for the selected connection")
@@ -92,15 +92,15 @@ with right:
             fig, ax = plt.subplots(figsize=(12, 6))
 
             for (country, direction), group in selected_data.groupby(["country", "direction"]):
-                group = group.sort_values("Date")
+                group = group.sort_values("date")
                 ax.plot(
-                    group["Date"], 
+                    group["date"], 
                     group["flow_MW"], 
                     label=f"{country} - {direction}",
                     linewidth=.8
                 )
 
-            ax.set_title(f"Norway cross-border flows with {connection} in {year}")
+            ax.set_title(f"Norway cross-border flows with {connections} in {year}")
             ax.set_xlabel("Date")
             ax.set_ylabel("Flow (MW)")
             ax.legend()
