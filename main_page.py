@@ -1,5 +1,20 @@
 import pandas as pd
 import streamlit as st
+import requests
+
+    #making a path to the secrets file and reading it into a dictionary
+secrets = {}
+
+with open(".streamlit/secrets.txt", "r") as file:
+    for line in file:
+        line = line.strip()
+
+        #Skip empty lines and comments
+        if not line or line.startswith("#"):
+            continue
+
+        name, value = line.split("=", 1)
+        secrets[name.strip()] = value.strip()
 
 #configuring the page
 st.set_page_config(page_title = "Main page", initial_sidebar_state = "expanded")
@@ -11,7 +26,11 @@ st.write("Welcome to the main page of my streamlit app on the left side you can 
 #loading the data and caching
 @st.cache_data
 def get_data():
-    df = pd.read_csv("data/reservoirs.csv")
+    #importing data form magasinstatistikk through API url and converting it into a pandas dataframe
+    response = requests.get(secrets["magasinstatistikk_url"], timeout = 30)
+    response.raise_for_status()
+
+    df = pd.DataFrame(response.json())
 
     df.columns = [
     "Date",
