@@ -37,7 +37,7 @@ with left:
     connections = st.radio("Select connection",options = sorted(df_flows["country"].dropna().unique()))
     year = st.selectbox("Select year", options = sorted(df_flows["date"].dt.year.dropna().unique()))
 
-    selected_data_f = df_flows[df_flows["country"] == connections & df_flows["date"].dt.year == year].copy()
+    selected_data_f = df_flows[(df_flows["country"] == connections) & (df_flows["date"].dt.year == year)].copy()
     #Convert MW to MWh: assumes every observation covers 1 hour
     selected_data_f["flow_MWh"] = selected_data_f["flow_MW"] * 1
     total_flows = selected_data_f.groupby("direction")["flow_MWh"].sum()
@@ -81,9 +81,9 @@ with right:
     else:
         month_numbers = [months[month] for month in selected_month]
 
-        selected_data = df_flows[df_flows["country"] == connections 
-                                 & df_flows["date"].dt.year == year 
-                                 & df_flows["date"].dt.month.isin(month_numbers)].copy()
+        selected_data = df_flows[(df_flows["country"] == connections) 
+                                 & (df_flows["date"].dt.year == year) 
+                                 & (df_flows["date"].dt.month.isin(month_numbers))].copy()
 
         if selected_data.empty:
             st.info("No data available for the selected connection")
