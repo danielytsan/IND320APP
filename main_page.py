@@ -13,7 +13,7 @@ st.write("Welcome to the main page of my streamlit app on the left side you can 
 @st.cache_data
 def get_data():
     #importing data form magasinstatistikk through API url and converting it into a pandas dataframe
-    response = requests.get(st.secrets["magasinstatistikk_api_url"], timeout = 30)
+    response = requests.get(st.secrets["magasinstatistikk_url"], timeout = 30)
     response.raise_for_status()
 
     df = pd.DataFrame(response.json())
