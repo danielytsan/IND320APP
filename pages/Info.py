@@ -35,9 +35,9 @@ with left:
     st.subheader("Data by connection and year")
 
     connections = st.radio("Select connection",options = sorted(df_flows["country"].dropna().unique()))
-    year = st.selectbox("Select year", options = sorted(df_flows["Date"].dt.year.dropna().unique()))
+    year = st.selectbox("Select year", options = sorted(df_flows["date"].dt.year.dropna().unique()))
 
-    selected_data_f = df_flows[df_flows["country"] == connections & df_flows["Date"].dt.year == year].copy()
+    selected_data_f = df_flows[df_flows["country"] == connections & df_flows["date"].dt.year == year].copy()
     #Convert MW to MWh: assumes every observation covers 1 hour
     selected_data_f["flow_MWh"] = selected_data_f["flow_MW"] * 1
     total_flows = selected_data_f.groupby("direction")["flow_MWh"].sum()
