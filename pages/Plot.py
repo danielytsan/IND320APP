@@ -42,7 +42,7 @@ start_month, end_month = st.select_slider(
 date_month = df["Date"].dt.strftime("%Y-%m")
 
 filtered_df = df[
-    date_month.between(start_month, end_month) & df["Area"] == select_area
+    date_month.between(start_month, end_month) & (df["Area"] == select_area)
 ].copy()
 
 #plot all numeric columns or selected column
