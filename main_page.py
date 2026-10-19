@@ -1,6 +1,8 @@
 import pandas as pd
 import streamlit as st
 import requests
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
 
 #configuring the page
 st.set_page_config(page_title = "Main page", initial_sidebar_state = "expanded")
@@ -34,3 +36,13 @@ def get_data():
     return df
 
 st.session_state["df"] = get_data()
+
+@st.cache_resource
+def get_mongo_data():
+    uri = f"mongodb+srv://open_for_all:{st.secrets['db_password']}@cluster0.esy9giu.mongodb.net/"
+
+    # Create a new client and connect to the server
+    client = MongoClient(uri, server_api=ServerApi('1'))
+    return client
+
+st.session_state["df_mongo"] = get_mongo_data()
