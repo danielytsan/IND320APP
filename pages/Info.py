@@ -96,7 +96,7 @@ with right:
             st.info("No data available for the selected connection")
         else:
             #plotting the flows
-            fig, ax = plt.subplots(figsize=(12, 6))
+            fig, ax = plt.subplots(figsize=(16, 10))
 
             for (country, direction), group in selected_data.groupby(["country", "direction"]):
                 group = group.sort_values("date")
@@ -121,7 +121,7 @@ with right:
         
 #adding expander
 with st.expander("About the data"):
-    st.write("Here you can see more information about what the plots shows."
+    st.write("Here you can see more information about what the plots shows. "
              "The left side shows the total flows between Norway and the selected country in the selected year. "
              "The right side shows the flows by month for the selected connection and year. " \
              "You can select multiple months to see how the flows change over time.")
