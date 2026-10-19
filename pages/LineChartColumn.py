@@ -20,6 +20,16 @@ df = df.sort_values("Date")
 first_month = df["Date"].min().to_period("M")
 month_data = df[df["Date"].dt.to_period("M") == first_month]
 
+month_data = month_data.drop(
+    columns = [
+        "Area",
+        "Area number",
+        "Year",
+        "Week",
+        "Next publication"
+    ]
+)
+
 
 rows = []
 
