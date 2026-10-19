@@ -42,11 +42,18 @@ with left:
     selected_data_f["flow_MWh"] = selected_data_f["flow_mw"] * 1
     total_flows = selected_data_f.groupby("direction")["flow_MWh"].sum()
 
+    fig, ax = plt.subplots(figsize=(5, 5))
+    
     total_flows.plot.pie(autopct='%1.1f%%', 
                         startangle=90, 
                         figsize=(5, 5), 
                         title=f"Total Flows between Norway and {connections} in {year}")
-    plt.show()
+
+
+    ax.set_ylabel("")
+    fig.tight_layout()
+    st.pyplot(fig)
+    plt.close(fig)
 
 
 
@@ -107,7 +114,8 @@ with right:
             ax.grid()
 
             fig.autofmt_xdate()
-            plt.tight_layout()
-            plt.show() 
+            fig.tight_layout()
+            st.pyplot(fig)
+            plt.close(fig) 
                     
         
