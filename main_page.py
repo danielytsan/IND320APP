@@ -5,7 +5,7 @@ import requests
     #making a path to the secrets file and reading it into a dictionary
 secrets = {}
 
-with open(".streamlit/secrets.txt", "r") as file:
+with open("secrets.txt", "r") as file:
     for line in file:
         line = line.strip()
 
