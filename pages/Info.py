@@ -39,7 +39,7 @@ with left:
 
     selected_data_f = df_flows[(df_flows["country"] == connections) & (df_flows["date"].dt.year == year)].copy()
     #Convert MW to MWh: assumes every observation covers 1 hour
-    selected_data_f["flow_MWh"] = selected_data_f["flow_MW"] * 1
+    selected_data_f["flow_MWh"] = selected_data_f["flow_mw"] * 1
     total_flows = selected_data_f.groupby("direction")["flow_MWh"].sum()
 
     total_flows.plot.pie(autopct='%1.1f%%', 
@@ -95,7 +95,7 @@ with right:
                 group = group.sort_values("date")
                 ax.plot(
                     group["date"], 
-                    group["flow_MW"], 
+                    group["flow_mw"], 
                     label=f"{country} - {direction}",
                     linewidth=.8
                 )
