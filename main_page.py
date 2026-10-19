@@ -9,6 +9,7 @@ st.title("Reservoirs Data")
 st.header("This is the main page")
 st.write("Welcome to the main page of my streamlit app on the left side you can navigate between the pages I hope you enjoy the app and find it useful")
 
+st.write("Available secret names:", list(st.secrets.keys()))
 #loading the data and caching
 @st.cache_data
 def get_data():
