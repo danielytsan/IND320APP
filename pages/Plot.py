@@ -52,18 +52,13 @@ if selected_column == "All columns":
 
     st.line_chart(plot_data, x_label = "Date", y_label = "Value")
 
-elif pd.api.types.is_numeric_dtype(df[selected_column]):
-    plot_data = filtered_df.pivot_table(
-        index = "Date",
-        columns = "Area label",
-        values = selected_column
+else: 
+    columns_to_plot = list(
+        dict.fromkeys(["Date", "Area label", selected_column])
     )
 
-    st.line_chart(
-        plot_data, 
-        x_label = "Date",
-        y_label = selected_column
+    st.dataframe(
+        filtered_df[columns_to_plot],
+        hide_index = True,
+        use_container_width = True
     )
-
-else:
-    st.info("Select a numeric column to plot")
