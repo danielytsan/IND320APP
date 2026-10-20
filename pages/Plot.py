@@ -62,8 +62,6 @@ else:
 
     st.line_chart(
         filtered_df[columns_to_plot],
-        x = "Date",
-        y = selected_column,
         x_label = "Date",
         y_label = "Value"
     )
