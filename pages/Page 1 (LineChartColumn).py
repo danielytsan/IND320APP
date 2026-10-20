@@ -16,9 +16,13 @@ df = st.session_state["df"].copy()
 df["Date"] = pd.to_datetime(df["Date"])
 df = df.sort_values("Date")
 
+#adding radio button for area selection
+select_area = st.radio("Select area", ["EL", "NO", "VASS"], horizontal = True)
+area_data = df[df["Area"] == select_area].copy()
+
 #getting the first month and filtering the dataframe to only include data from that month
-first_month = df["Date"].min().to_period("M")
-month_data = df[df["Date"].dt.to_period("M") == first_month]
+first_month = area_data["Date"].min().to_period("M")
+month_data = area_data[area_data["Date"].dt.to_period("M") == first_month].copy()
 
 month_data = month_data.drop(
     columns = [
@@ -29,7 +33,6 @@ month_data = month_data.drop(
         "Next publication"
     ]
 )
-
 
 rows = []
 
