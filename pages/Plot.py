@@ -60,7 +60,7 @@ else:
         dict.fromkeys(["Date", "Area label", selected_column])
     )
 
-    st.dataframe(
+    st.line_chart(
         filtered_df[columns_to_plot],
         hide_index = True,
         use_container_width = True
