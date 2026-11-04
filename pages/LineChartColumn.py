@@ -22,6 +22,7 @@ month_data = df[df["Date"].dt.to_period("M") == first_month]
 
 month_data = month_data.drop(
     columns = [
+        "Date",
         "Area",
         "Area number",
         "Year",
