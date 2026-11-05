@@ -222,3 +222,7 @@ __marimo__/
 
 #api keys
 .streamlit/secrets.toml
+
+.cache.sqlite
+
+data/.weather_data
