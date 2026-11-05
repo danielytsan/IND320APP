@@ -42,7 +42,7 @@ start_month, end_month = st.select_slider(
 date_month = df["Date"].dt.strftime("%Y-%m")
 
 filtered_df = df[
-    date_month.between(start_month, end_month) & df["Area"] == select_area
+    date_month.between(start_month, end_month) & (df["Area"] == select_area)
 ].copy()
 
 #plot all numeric columns or selected column
@@ -60,8 +60,10 @@ else:
         dict.fromkeys(["Date", "Area label", selected_column])
     )
 
-    st.dataframe(
+    st.line_chart(
         filtered_df[columns_to_plot],
-        hide_index = True,
-        use_container_width = True
+        x = "Date",
+        y = selected_column,
+        x_label = "Date",
+        y_label = "Value"
     )

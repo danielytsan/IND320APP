@@ -45,4 +45,4 @@ def get_mongo_data():
     client = MongoClient(uri, server_api=ServerApi('1'))
     return client
 
-st.session_state["df_mongo"] = get_mongo_data()
+st.session_state["mongo_client"] = get_mongo_data()
