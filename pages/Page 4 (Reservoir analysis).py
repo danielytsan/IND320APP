@@ -49,7 +49,7 @@ def plot_fill_stl(df, seasonal = 7, trend = 101, robust = True):
         (result.observed, "Observed (%)"),
         (result.trend, "Trend (%)"),
         (result.seasonal, "Seasonal"),
-        (reuslt.resid, "Residual")
+        (result.resid, "Residual")
     )
 
     for ax, (values, label) in zip(axes, components):
