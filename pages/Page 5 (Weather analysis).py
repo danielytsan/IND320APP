@@ -152,6 +152,10 @@ if loaded is not None and loaded[0] == selection:
     weather, latitude, longitude = loaded[1]
     st.caption(f"Hourly ERA5 at one location ({latitude:.3f}, {longitude:.3f})")
 
+if weather is None:
+    st.info("Clock load ERA5 weather to run analysis")
+    st.stop
+
 spc_tab, lof_tab = st.tabs(["Outlier / SPC", "Anomaly /LOF"])
 
 with spc_tab: 
