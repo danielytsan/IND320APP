@@ -15,7 +15,16 @@ IND320APP/
 ├── .streamlit/
 │   └── secrets.toml
 ├── data/
-│   └── reservoirs.csv
+│   ├── Budområder/
+│   │   ├── Budområder.dbf
+│   │   ├── Budområder.prj
+│   │   ├── Budområder.shp
+│   │   └── Budområder.shx
+│   └── NVE_Region/
+│       ├── NVE_Region.dbf
+│       ├── NVE_Region.prj
+│       ├── NVE_Region.shp
+│       └── NVE_Region.shx
 ├── notebooks/
 │   ├── Part1.ipynb
 │   ├── Part2.ipynb
