@@ -14,17 +14,16 @@ st.set_page_config(page_title = "Weather Data", initial_sidebar_state = "expande
 st.title("Weather analysis")
 st.header("Here you can see a SPC analysis and a LOF analysis for the weather data")
 
-#loding the data from main page and checking if it is available
-if "df" not in st.session_state:
-    st.info("Open the main page first to load the data")
-    st.stop()
-df = st.session_state["df"].copy()
+load_weather = st.session_state.get("load_weather")
+if load_weather is None:
+    st.info("Open the main page first")
+    st.stop
 
 area = st.session_state.get("reservoir_area")
-load_weather = st.session_state.get("load_weather")
 if area is None:
-    st.info("select a resercoir area on Page 4 before loading weather")
-    
+    st.info("select a resercoir area on Page 4")
+    st.stop
+
 st.caption(f"Selected resercoir area: {area}")
 shapefile = "data/Budområder/Budområder.shp"
 
@@ -48,7 +47,7 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
     baseline = values - satv
     
     #estimate robust limits and change them to precipitation scale
-    center = np.meadian(satv)
+    center = np.median(satv)
     robust_std = 1.4826 * median_abs_deviation(satv)
     #precipitation values
     lower = baseline + center - n_std * robust_std
@@ -76,10 +75,10 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
     #plotting and marking the hour outside the spc limits
     fig, ax = plt.subplots(figsize = (10, 5))
     ax.plot(precipitation.index, values, label = "Hourly precipitation")
-    ax.plot(precipitation.index, upper, "r---", label = "SPC limits")
-    ax.plot(precipitation.index, lower, "r---")
+    ax.plot(precipitation.index, upper, "r--", label = "SPC limits")
+    ax.plot(precipitation.index, lower, "r--")
     ax.scatter(outliers.index, outliers["Precipitation"],
-               color = "red", s = 15, zorder = 3, labels = "Outliers",)
+               color = "red", s = 15, zorder = 3, label = "Outliers",)
     ax.set(
         title = "Hourly precipitation with robust SPC limits",
         xlabel = "Time",
@@ -131,33 +130,18 @@ def show_results(fig, summary, outliers):
     plt.close(fig)
 
     st.subheader("Summary statistics")
-    st.dataframe(summary.to_fram("Value"))
+    st.dataframe(summary.to_frame("Value"))
 
     st.subheader("Flagged observations")
     st.dataframe(outliers)
 
 #setting default to the most recent caldendar year
 year = date.today().year - 1
-with st.form("weather_download"):
-    start_date = st.date_input("Start date", value = date(year, 1, 1))
-    end_date = st.date_input("End date", value = date(year, 12, 31))
-    download = st.form_submit_button("Load ERA5 weather")
-
-#keeping the downloaded data while possible to change analysis setting
-selection = (area, start_date, end_date)
-if download:
-    loaded_data = load_weather(area, shapefile, start_date, end_date)
-    st.session_state["weather_analysis_data"] = (selection, loaded_data)
-
-weather = None
-loaded = st.session_state.get("weather_analysis_data")
-if loaded is not None and loaded[0] == selection:
-    weather, latitude, longitude = loaded[1]
-    st.caption(f"Hourly ERA5 at one location ({latitude:.3f}, {longitude:.3f})")
-
-if weather is None:
-    st.info("Clock load ERA5 weather to run analysis")
-    st.stop
+start_date = st.date_input("Start date", value = date(year, 1, 1))
+end_date = st.date_input("End date", value = date(year, 12, 31))
+with st.spinner("Loading hourly ERA5 weather"):
+    weather, latitude, longitude = load_weather(area, shapefile, start_date, end_date)
+st.caption(f"Hourly ERA5 at one location ({latitude:.3f}, {longitude:.3f})")
 
 spc_tab, lof_tab = st.tabs(["Outlier / SPC", "Anomaly /LOF"])
 
@@ -167,7 +151,7 @@ with spc_tab:
     show_results(*plot_precipitation_outliers(weather, cutoff_days, n_std))
 
 with lof_tab:
-    percent = st.number_input("Expected outliers (%)", min_value = 0.1, max_value = 50, value = 1)
+    percent = st.number_input("Expected outliers (%)", min_value = 0.1, max_value = 50.0, value = 1.0)
     show_results(*plot_temperature_outliers(weather, percent / 100))
         
 
