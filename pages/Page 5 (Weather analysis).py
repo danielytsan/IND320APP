@@ -17,12 +17,12 @@ st.header("Here you can see a SPC analysis and a LOF analysis for the weather da
 load_weather = st.session_state.get("load_weather")
 if load_weather is None:
     st.info("Open the main page first")
-    st.stop
+    st.stop()
 
 area = st.session_state.get("reservoir_area")
 if area is None:
     st.info("select a resercoir area on Page 4")
-    st.stop
+    st.stop()
 
 st.caption(f"Selected resercoir area: {area}")
 shapefile = "data/Budområder/Budområder.shp"
