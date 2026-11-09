@@ -20,7 +20,7 @@ if "df" not in st.session_state:
     st.stop()
 df = st.session_state["df"].copy()
 
-area = st.seasion_state.get("reservoir_area")
+area = st.session_state.get("reservoir_area")
 load_weather = st.session_state.get("load_weather")
 st.caption(f"Selected resercoir area: {area}")
 shapefile = "data/Budområder/Budområder.shp"
