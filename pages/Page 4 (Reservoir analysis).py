@@ -21,7 +21,7 @@ areas = sorted(df["Area label"].dropna().unique())
 area = st.selectbox("select area", areas, index = areas.index("NO 0") if "NO 0" in areas else 0)
 
 #preparing one weekly fill series for the tabs
-data = df.loc[df["Areas label"] == area, ["Date", "Fill level"]].copy()
+data = df.loc[df["Area label"] == area, ["Date", "Fill level"]].copy()
 data["Date"] = pd.to_datetime(data["Date"])
 fill = data.set_index("Date")["Fill level"].sort_index() * 100
 
