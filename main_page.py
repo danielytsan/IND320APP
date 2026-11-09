@@ -55,9 +55,13 @@ def load_weather(area, shapefile, start_date, end_date):
     if area.startswith("EL "):
         zone = "NO" + area.split()[1]
         labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
-        zones = zones.loc[labels == zone]
+        zones = gpd.GeoDataFrame(
+            zones.loc[labels == zone].copy(),
+            geometry = "geometry",
+            crs = zones.crs
+        )
 
-    combined = zones.to.crs(3035).dissolve()
+    combined = zones.to_crs(3035).dissolve()
     point = combined.representative_point().to_crs(4326).iloc[0]
     variables = ["temperature_2m", "precipitation", "snowfall"]
     response = requests.get(st.secrets["open_meteo"], 
