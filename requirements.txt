@@ -4,7 +4,7 @@ matplotlib
 pymongo[srv]
 requests
 pyspark
-numpu
+numpy
 scipy
 statsmodels
 geopandas

@@ -11,26 +11,32 @@
 IND320APP/
 ├── main_page.py
 ├── requirements.txt
+├── .gitignore
 ├── .streamlit/
 │   └── secrets.toml
 ├── data/
 │   └── reservoirs.csv
 ├── notebooks/
 │   ├── Part1.ipynb
-│   └── Part2.ipynb
+│   ├── Part2.ipynb
+│   └── Part3.ipynb
 └── pages/
     ├── Page 1 (LineChartColumn).py
     ├── Page 2 (Plot of data).py
-    └── Page 3 (MongoDB data).py
+    ├── Page 2 (Plot of data).py
+    ├── Page 2 (Plot of data).py
+    ├── Page 3 (MongoDB data).py
+    ├── Page 4 (Reservoir analysis).py
+    └── Page 5 (Weather analysis).py
 
 ```
 
 ## Data
 
-In this project we are using MongoDB and magasinstatistikk where we reed this using pandas
-
-Streamlit is containing 4 pages in total:
+Streamlit is containing 6 pages in total:
 1. Main page
 2. LineChartColumn
 3. Plot of data
 4. MongoDB data
+5. Reservoir analysis
+6. Weather analysis
