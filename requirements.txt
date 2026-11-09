@@ -4,3 +4,8 @@ matplotlib
 pymongo[srv]
 requests
 pyspark
+numpu
+scipy
+statsmodels
+geopandas
+scikit-learn
