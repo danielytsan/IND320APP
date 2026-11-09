@@ -39,7 +39,7 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
 
     #romwing low frequencies
     coefficients = dct(values, type = 1, norm = "forward")
-    frequencies = np.linspace(0. .5, len(values))
+    frequencies = np.linspace(0, .5, len(values))
     coefficients[frequencies <= 1 / (cutoff_days * 24)] = 0
     satv = idct(coefficients, type = 1, norm = "forward")
     baseline = values - satv
