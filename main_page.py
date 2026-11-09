@@ -59,7 +59,7 @@ def load_weather(area, shapefile, start_date, end_date):
 
     combined = zones.to.crs(3035).dissolve()
     point = combined.representative_point().to_crs(4326).iloc[0]
-    variables = ["temperature,2m", "precipitation", "snowfall"]
+    variables = ["temperature_2m", "precipitation", "snowfall"]
     response = requests.get(st.secrets["open_meteo"], 
                             params = {
                                 "latitude": point.y,

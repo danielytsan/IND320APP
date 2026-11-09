@@ -142,6 +142,10 @@ with st.form("weather_download"):
 
 #keeping the downloaded data while possible to change analysis setting
 selection = (area, start_date, end_date)
+if download:
+    loaded_data = load_weather(area, shapefile, start_date, end_date)
+    st.session_state["weather_analysis_data"] = (selection, loaded_data)
+
 weather = None
 loaded = st.session_state.get("weather_analysis_data")
 if loaded is not None and loaded[0] == selection:
