@@ -138,7 +138,7 @@ year = date.today().year - 1
 with st.form("weather_download"):
     start_date = st.date_input("Start date", value = date(year, 1, 1))
     end_date = st.date_input("End date", value = date(year, 12, 31))
-    download = st.from_submit_button("Load ERA5 weather")
+    download = st.form_submit_button("Load ERA5 weather")
 
 #keeping the downloaded data while possible to change analysis setting
 selection = (area, start_date, end_date)

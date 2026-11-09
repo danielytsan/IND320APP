@@ -19,6 +19,7 @@ df = st.session_state["df"].copy()
 df["Area label"] = df["Area"] + " " + df["Area number"].astype(str)
 areas = sorted(df["Area label"].dropna().unique())
 area = st.selectbox("select area", areas, index = areas.index("NO 0") if "NO 0" in areas else 0)
+st.session_state["reservoir_area"] = area
 
 #preparing one weekly fill series for the tabs
 data = df.loc[df["Area label"] == area, ["Date", "Fill level"]].copy()
