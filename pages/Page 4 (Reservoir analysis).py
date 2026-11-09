@@ -62,12 +62,7 @@ def plot_fill_stl(df, seasonal = 7, trend = 101, robust = True):
     return fig
 
 #plot for spectrogram
-def plot_fill_spectrogram(data, window_length = 208, window_overlap = 156):
-    fill = (
-            data.set_index("Date")["Fill level (%)"]
-            .sort_index()
-            .asfreq("W-SUN"))
-
+def plot_fill_spectrogram(fill, window_length = 208, window_overlap = 156):
     frequncies, weeks, coefficients = stft(
         fill.to_numpy(),
         fs = 1,
