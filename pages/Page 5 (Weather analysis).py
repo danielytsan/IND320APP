@@ -22,6 +22,9 @@ df = st.session_state["df"].copy()
 
 area = st.session_state.get("reservoir_area")
 load_weather = st.session_state.get("load_weather")
+if area is None:
+    st.info("select a resercoir area on Page 4 before loading weather")
+    
 st.caption(f"Selected resercoir area: {area}")
 shapefile = "data/Budområder/Budområder.shp"
 
