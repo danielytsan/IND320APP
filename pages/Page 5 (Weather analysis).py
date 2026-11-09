@@ -133,5 +133,30 @@ def show_results(fig, summary, outliers):
     st.subheader("Flagged observations")
     st.dataframe(outliers)
 
+#setting default to the most recent caldendar year
+year = date.today().year - 1
+with st.form("weather_download"):
+    start_date = st.date_input("Start date", value = date(year, 1, 1))
+    end_date = st.date_input("End date", value = date(year, 12, 31))
+    download = st.from_submit_button("Load ERA5 weather")
 
+#keeping the downloaded data while possible to change analysis setting
+selection = (area, start_date, end_date)
+weather = None
+loaded = st.session_state.get("weather_analysis_data")
+if loaded is not None and loaded[0] == selection:
+    weather, latitude, longitude = loaded[1]
+    st.caption(f"Hourly ERA5 at one location ({latitude:.3f}, {longitude:.3f})")
+
+spc_tab, lof_tab = st.tabs(["Outlier / SPC", "Anomaly /LOF"])
+
+with spc_tab: 
+    cutoff_days = st.number_input("DCT cutoff period", min_value = 1, value = 30)
+    n_std = st.number_input("Robust standard deviations", min_value = .1, value = 3)
+    show_results(*plot_precipitation_outliers(weather, cutoff_days, n_std))
+
+with lof_tab:
+    percent = st.number_input("Expected outliers (%)", min_value = .1, max_value = 50, value = 1)
+    show_results(*plot_temperature_outliers(weather, percent / 100))
+        
 
