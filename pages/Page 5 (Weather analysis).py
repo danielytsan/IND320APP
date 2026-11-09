@@ -152,11 +152,11 @@ spc_tab, lof_tab = st.tabs(["Outlier / SPC", "Anomaly /LOF"])
 
 with spc_tab: 
     cutoff_days = st.number_input("DCT cutoff period", min_value = 1, value = 30)
-    n_std = st.number_input("Robust standard deviations", min_value = .1, value = 3)
+    n_std = st.number_input("Robust standard deviations", min_value = 0.1, value = 3.0)
     show_results(*plot_precipitation_outliers(weather, cutoff_days, n_std))
 
 with lof_tab:
-    percent = st.number_input("Expected outliers (%)", min_value = .1, max_value = 50, value = 1)
+    percent = st.number_input("Expected outliers (%)", min_value = 0.1, max_value = 50, value = 1)
     show_results(*plot_temperature_outliers(weather, percent / 100))
         
 
