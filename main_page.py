@@ -56,17 +56,8 @@ def load_weather(area, shapefile, start_date, end_date):
     zones = gpd.read_file(shapefile)
     labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
     selected = zones.loc[labels.eq(zone)]
-    """
-    if area.startswith("EL "):
-        zone = "NO" + area.split()[1]
-        labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
-        zones = gpd.GeoDataFrame(
-            zones.loc[labels == zone].copy(),
-            geometry = "geometry",
-            crs = zones.crs
-        )
-    """
-    combined = zones.to_crs(3035).dissolve()
+    
+    combined = zones.dissolve().to_crs(3035)
     candidates = combined.geometry.sample_points(size = 1000, random_state = 42)
     point = candidates.to_crs(4326).iloc[0].geoms[0]
 
