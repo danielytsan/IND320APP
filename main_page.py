@@ -51,7 +51,12 @@ st.session_state["mongo_client"] = get_mongo_data()
 #loading data and caching from open meteo
 @st.cache_data
 def load_weather(area, shapefile, start_date, end_date):
+    area_type, _, area_number = area.partition(" ")
+    zone = f"NO{area_number}"
     zones = gpd.read_file(shapefile)
+    labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
+    selected = zones.loc[labels.eq(zone)]
+    """
     if area.startswith("EL "):
         zone = "NO" + area.split()[1]
         labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
@@ -60,9 +65,12 @@ def load_weather(area, shapefile, start_date, end_date):
             geometry = "geometry",
             crs = zones.crs
         )
-
+    """
     combined = zones.to_crs(3035).dissolve()
-    point = combined.representative_point().to_crs(4326).iloc[0]
+    candidates = combined.geometry.sample_points(size = 1000, random_state = 42)
+    point = candidates.to_crs(4326).iloc[0].geom[0]
+
+    #requst hour ERA5 data for the first sample point
     variables = ["temperature_2m", "precipitation", "snowfall"]
     response = requests.get(st.secrets["open_meteo"], 
                             params = {
@@ -78,8 +86,6 @@ def load_weather(area, shapefile, start_date, end_date):
 
     weather = pd.DataFrame(response.json()["hourly"])
     weather["time"] = pd.to_datetime(weather["time"], utc = True)
-
-    expected_hours = 24 * ((end_date - start_date).days + 1)
     return weather, point.y, point.x
 
 st.session_state["load_weather"] = load_weather
