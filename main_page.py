@@ -68,7 +68,7 @@ def load_weather(area, shapefile, start_date, end_date):
     """
     combined = zones.to_crs(3035).dissolve()
     candidates = combined.geometry.sample_points(size = 1000, random_state = 42)
-    point = candidates.to_crs(4326).iloc[0].geom[0]
+    point = candidates.to_crs(4326).iloc[0].geoms[0]
 
     #requst hour ERA5 data for the first sample point
     variables = ["temperature_2m", "precipitation", "snowfall"]
