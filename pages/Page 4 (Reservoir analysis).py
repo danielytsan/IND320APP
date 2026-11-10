@@ -78,9 +78,15 @@ def plot_fill_spectrogram(fill, window_length = 208, window_overlap = 156):
     cycles_per_year = frequncies * 52
 
     fig, ax = plt.subplots(figsize = (10, 5), layout = "constrained")
-    mesh = ax.pcolormesh(
-        dates, cycles_per_year, np.abs(coefficients)
-    )
+    
+    #to be able to see the plot more clearer i have added a dB scale so it is easier to see variation on the higher frequencies
+    magnitude = np.abs(coefficients)
+    peak = magnitude.max()
+    reference = peak if peak > 0 else 1.0
+    magnitude_db = 20 * np.log10(np.maximum(magnitude / reference, 1e-12))
+    
+    mesh = ax.pcolormesh(dates, frequncies * 52, magnitude_db, shading = "auto", vmin = -60, vmax = 0)
+   
 
     #marking the frequency of one cycle pr year
     ax.axhline(1, color = "white", linestyle = "--", label = "Anual cycle")
