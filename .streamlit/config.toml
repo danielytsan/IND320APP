@@ -2,7 +2,7 @@
 
 base = "light"
 primaryColor = "#daddeb"
-backgroundColor = "#cae0d9"
+backgroundColor = "#4d6069"
 font = "'Times New Roman', serif"
 
 [client]
@@ -12,5 +12,5 @@ showSidebarNavigation = true
 
 base = "light"
 primaryColor = "#daddeb"
-backgroundColor = "#cae0d9"
+backgroundColor = "#4d6080"
 font = "'Times New Roman', serif"
