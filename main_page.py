@@ -1,4 +1,5 @@
 import pandas as pd
+import geopandas as gpd
 import streamlit as st
 import requests
 from pymongo.mongo_client import MongoClient
@@ -46,3 +47,36 @@ def get_mongo_data():
     return client
 
 st.session_state["mongo_client"] = get_mongo_data()
+
+#loading data and caching from open meteo
+@st.cache_data
+def load_weather(area, shapefile, start_date, end_date):
+    area_type, _, area_number = area.partition(" ")
+    zone = f"NO{area_number}"
+    zones = gpd.read_file(shapefile)
+    labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
+    selected = zones.loc[labels.eq(zone)]
+    
+    combined = zones.dissolve().to_crs(3035)
+    candidates = combined.geometry.sample_points(size = 1000, random_state = 42)
+    point = candidates.to_crs(4326).iloc[0].geoms[0]
+
+    #requst hour ERA5 data for the first sample point
+    variables = ["temperature_2m", "precipitation", "snowfall"]
+    response = requests.get(st.secrets["open_meteo"], 
+                            params = {
+                                "latitude": point.y,
+                                "longitude": point.x,
+                                "start_date": start_date.isoformat(),
+                                "end_date": end_date.isoformat(),
+                                "hourly": ",".join(variables),
+                                "models": "era5",
+                                "timezone": "GMT"
+                            }, timeout = 30)
+    response.raise_for_status()
+
+    weather = pd.DataFrame(response.json()["hourly"])
+    weather["time"] = pd.to_datetime(weather["time"], utc = True)
+    return weather, point.y, point.x
+
+st.session_state["load_weather"] = load_weather

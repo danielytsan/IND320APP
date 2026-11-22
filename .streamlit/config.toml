@@ -1,0 +1,16 @@
+[theme]
+
+base = "light"
+primaryColor = "#4d6069"
+backgroundColor = "#cae0d9"
+font = "'Times New Roman', serif"
+
+[client]
+showSidebarNavigation = true
+
+[theme.sidebar]
+
+base = "light"
+primaryColor = "#4d6069"
+backgroundColor = "#cae0d9"
+font = "'Times New Roman', serif"
