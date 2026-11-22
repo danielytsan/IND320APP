@@ -1,8 +1,8 @@
 [theme]
 
 base = "light"
-primaryColor = "#daddeb"
-backgroundColor = "#4d6069"
+primaryColor = "#4d6069"
+backgroundColor = "#cae0d9"
 font = "'Times New Roman', serif"
 
 [client]
@@ -11,6 +11,6 @@ showSidebarNavigation = true
 [theme.sidebar]
 
 base = "light"
-primaryColor = "#daddeb"
-backgroundColor = "#4d6080"
+primaryColor = "#4d6069"
+backgroundColor = "#cae0d9"
 font = "'Times New Roman', serif"
