@@ -2,5 +2,8 @@
 
 base = "light"
 primaryColor = "#daddeb"
-backgroundColor = "#FFFFFF"
+backgroundColor = "#d9f6fa"
 font = "'Times New Roman', serif"
+
+[client]
+shoeSidebarNavigation = true
