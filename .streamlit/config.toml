@@ -2,8 +2,8 @@
 
 base = "light"
 primaryColor = "#daddeb"
-backgroundColor = "#d9f6fa"
+backgroundColor = "#cae0d9"
 font = "'Times New Roman', serif"
 
 [client]
-shoeSidebarNavigation = true
+showSidebarNavigation = true
