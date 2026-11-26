@@ -171,7 +171,7 @@ for feature in geojson["features"]:
 
 #creating the map using folium
 map_object = folium.Map(
-    loaction = [65, 14],
+    location = [65, 14],
     zoom_start = 4, 
     tiles = "OpenStreetMap",
 )
@@ -242,7 +242,7 @@ if clicked:
                     st.rerun()
 
 
-st.success("Selected area: {st.session_state['reservoir_area']}")
+st.success(f"Selected area: {st.session_state['reservoir_area']}")
 
 st.caption("The thick outline shows the selected area."
            "Grey areas have missing or incomplete data."
