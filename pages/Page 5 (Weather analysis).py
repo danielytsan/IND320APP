@@ -1,15 +1,16 @@
 import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
-import requests
 import streamlit as st
+import plotly.graph_objects as go
 from scipy.fft import dct, idct
 from scipy.stats import median_abs_deviation
 from sklearn.neighbors import LocalOutlierFactor
 from datetime import date
 
 
-st.set_page_config(page_title = "Weather Data", initial_sidebar_state = "expanded")
+
+st.set_page_config(page_title = "Weather analysis", initial_sidebar_state = "expanded")
 
 st.title("Weather analysis")
 st.header("Here you can see a SPC analysis and a LOF analysis for the weather data")
@@ -34,14 +35,11 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
 
     #sort timestamps so it is in chronological order
     precipitation = (data.groupby("time")["precipitation"].mean().sort_index())
-
-    #create a date range with the same start and end times as the precipitation data
-    expected_time = pd.date_range(precipitation.index.min(), precipitation.index.max(), freq = "h",)
     values = precipitation.to_numpy(dtype = float)
 
     #romwing low frequencies
     coefficients = dct(values, type = 1, norm = "forward")
-    frequencies = np.linspace(0, .5, len(values))
+    frequencies = np.linspace(0, .5, len(values),)
     coefficients[frequencies <= 1 / (cutoff_days * 24)] = 0
     satv = idct(coefficients, type = 1, norm = "forward")
     baseline = values - satv
@@ -73,19 +71,57 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
     })
 
     #plotting and marking the hour outside the spc limits
-    fig, ax = plt.subplots(figsize = (10, 5))
-    ax.plot(precipitation.index, values, label = "Hourly precipitation")
-    ax.plot(precipitation.index, upper, "r--", label = "SPC limits")
-    ax.plot(precipitation.index, lower, "r--")
-    ax.scatter(outliers.index, outliers["Precipitation"],
-               color = "red", s = 15, zorder = 3, label = "Outliers",)
-    ax.set(
-        title = "Hourly precipitation with robust SPC limits",
-        xlabel = "Time",
-        ylabel = "Preciptitation",
+    fig = go.Figure()
+    fig.add_trace(
+        go.Scattergl(
+            x = precipitation.index,
+            y = values, 
+            mode = "lines",
+            name = "Hourly precipitation",
+            line = {"width": 1.2},
+        )
     )
-    ax.legend()
-    fig.tight_layout()
+
+    #dashing lines shows SPC limits
+    fig.add_trace(
+        go.Scattergl(
+            x = precipitation.index,
+            y = upper,
+            mode = "lines",
+            name = "SPC limits",
+            legendgroup = "limits",
+            line = {"dash": "dash", "width": 1.2,},
+        )
+    )
+
+    fig.add_trace(
+        go.Scattergl(
+            x = precipitation.index,
+            y = lower,
+            mode = "lines",
+            name = "SPC limits",
+            legendgroup = "limits",
+            showlegend = False,
+            line = {"dash": "dash", "width": 1.2,},
+        )
+    )
+
+    fig.add_trace(
+        go.Scattergl(
+            x = outliers.index,
+            y = outliers["Precipitation"],
+            mode = "markers",
+            name = "Outliers",
+            marker = {"size": 7, "symbol": "diamond",},
+        )
+    )
+
+    fig.update_layout(
+        title = "Hourly precipitation with robust SPC limits",
+        height = 480,
+        xaxis_title = "Time",
+        yaxis_title = "Precimitation (mm/h)",
+    )
     return fig, summary, outliers
 
 #making a function to plot temp outliers
@@ -112,26 +148,49 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
             "Highest LOF score": scores.max(),
         })
 
-    fig, ax = plt.subplots(figsize = (10, 5))
-    ax.plot(temperature.index, values, label = "Hourly temperature")
-    ax.scatter(outliers.index, outliers["Temperature"],
-               color = "red", s = 20, zorder = 4, label = "LOF anomalies",)
-    ax.set(
-        title = "Hourly temperature with LOF anomalies",
-        xlabel = "Time",
-        ylabel = "Temperature",
+    fig = go.Figure()
+
+    fig.add_trace(
+        go.Scattergl(
+            x = temperature.index,
+            y = values,
+            mode = "lines",
+            name = "Hourly temperature",
+            line = {"width": 1.2},
+        )
     )
-    ax.legend()
-    fig.tight_layout()
+
+    fig.add_trace(
+        go.Scattergl(
+            x = outliers.index,
+            y = outliers["Temperature"],
+            mode = "markers",
+            name = "LOF anomalies",
+            marker = {"size": 7, "symbol": "diamond",},
+
+            #adding LOF scores to the marker info
+            costumdata = outliers["LOF score"].to_numpy(),
+            hovertemplate = (
+                "%{x|%d %b %Y %H:%M}<br>"
+                "%{y:.2f} C<br>"
+                "LOF score %{customdata:.3f}"
+                "<extra></extra>"
+            ),
+        )
+    )
+
+    fig.update_layout(
+        title = "Hourly temp with LOF anomalies",
+        height = 480,
+        xaxis_title = "Time",
+        yaxis_title = "Temperature",
+    )
     return fig, summary, outliers
 
 def show_results(fig, summary, outliers):
-    st.pyplot(fig)
-    plt.close(fig)
-
+    st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
     st.subheader("Summary statistics")
-    st.dataframe(summary.to_frame("Value"))
-
+    st.dataframe(summary.to_fram("Value"))
     st.subheader("Flagged observations")
     st.dataframe(outliers)
 
