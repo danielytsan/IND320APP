@@ -68,7 +68,7 @@ def plot_fill_stl(fill, seasonal = 7, trend = 101, robust = True):
                 hovertemplate = (
                     "%{x|%d %b %Y}<br>"
                     "%{y:.2f}"
-                    "<extra%{fullData.name}</extra"
+                    "<extra%{fullData.name}</extra>"
                 ),
             ),
             row = row,
@@ -120,7 +120,7 @@ def plot_fill_spectrogram(fill, window_length = 208, window_overlap = 156):
                 "%{x|%d %b %Y}<br>"
                 "%{y:.2f} cycle pr year"
                 "%{z:.1f} dB"
-                "<extra></extra"
+                "<extra></extra>"
             ),
        )
    )
