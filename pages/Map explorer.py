@@ -85,7 +85,7 @@ unit = "%"
 
 if color_by == "Reservoir filling":
     #uses the latest NVE report
-    eligible = reservoir.loc[reservoir["Date"].le(pd.Timestamp(selected_day)) %reservoir["Area label"].isin(area_ids)]
+    eligible = reservoir.loc[reservoir["Date"].le(pd.Timestamp(selected_day)) & reservoir["Area label"].isin(area_ids)]
     latest = eligible.loc[eligible["Date"].eq(eligible["Date"].max())]
     values = dict(zip(latest["Area label"], latest["Fill level"] * 100,))
     report = latest["Date"].max()
@@ -131,7 +131,7 @@ else:
                 complete = len(weather) == expected_hour
                 series = weather[variable]
 
-                if complete and series.notna().all:
+                if complete and series.notna().all():
                     values[area] = series.mean() if method == "mean" else series.sum()
 
 color = st.get_option("theme.chartSequentialColors")
@@ -162,8 +162,12 @@ for feature in geojson["features"]:
     area = feature["properties"]["area_id"]
     value = values.get(area, float("nan"))
 
-    feature["properties"]["value"] = f"{value:.2f} {unit}"
-    feature["properties"]["fill"] = legend(value)
+    if pd.notna(value):
+        feature["properties"]["value"] = f"{value:.2f} {unit}"
+        feature["properties"]["fill"] = legend(value)
+    else:
+        feature["properties"]["value"] = "no data"
+        feature["properties"]["value"] = "#9CA3AF"
 
 #creating the map using folium
 map_object = folium.Map(
