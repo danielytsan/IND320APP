@@ -169,7 +169,7 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
             marker = {"size": 7, "symbol": "diamond",},
 
             #adding LOF scores to the marker info
-            costumdata = outliers["LOF score"].to_numpy(),
+            customdata = outliers["LOF score"].to_numpy(),
             hovertemplate = (
                 "%{x|%d %b %Y %H:%M}<br>"
                 "%{y:.2f} C<br>"
