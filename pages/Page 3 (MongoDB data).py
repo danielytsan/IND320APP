@@ -42,7 +42,7 @@ with left:
     selected_data_f["flow_MWh"] = selected_data_f["flow_mw"] * 1
     total_flows = selected_data_f.groupby("direction")["flow_MWh"].sum()
 
-    fig, ax = px.pie(
+    fig = px.pie(
         names = total_flows.index,
         values = total_flows.values,
         title = f"Norway - {connections} flows in {year}",
