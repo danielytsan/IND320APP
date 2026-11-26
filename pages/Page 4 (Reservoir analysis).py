@@ -5,10 +5,14 @@ import streamlit as st
 from scipy.signal import stft
 from statsmodels.tsa.seasonal import STL
 
-st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "expanded")
+from plotly.subplots import make_subplots
+import plotly.graph_objects as go
+
+
+st.set_page_config(page_title = "Rescervoirs analysis", initial_sidebar_state = "expanded")
 
 st.title("Reservoirs analysis")
-st.header("Here you can see a STL analysis and a spectogram for the reservoir data")
+st.header("Here you can see a STL analysis and a spectogram")
 
 #loding the data from main page and checking if it is available
 if "df" not in st.session_state:
@@ -29,7 +33,7 @@ fill = data.set_index("Date")["Fill level"].sort_index() * 100
 #Indexing to sundays so gaps in the weekly series transforms to missing values
 fill = fill.asfreq("W-SUN")
 
-def plot_fill_stl(df, seasonal = 7, trend = 101, robust = True):
+def plot_fill_stl(fill, seasonal = 7, trend = 101, robust = True):
     result = STL(
         fill, 
         period = 52,
@@ -38,28 +42,51 @@ def plot_fill_stl(df, seasonal = 7, trend = 101, robust = True):
         robust = robust
     ).fit()
 
-    fig, axes = plt.subplots(
-        4,
-        1,
-        sharex = True,
-        figsize = (11, 8),
-        layout = "constrained"
-    )
-
-    components = (
-        (result.observed, "Observed (%)"),
+    components = [
+        (result.observed, "Observed filling (%)"),
         (result.trend, "Trend (%)"),
         (result.seasonal, "Seasonal"),
         (result.resid, "Residual")
+    ]
+
+    fig = make_subplots(
+        rows = 4,
+        cols = 1,
+        shared_xaxes = True,
+        subplot_titles = [label for _, label in components],
+        vertical_spacing = 0.07,
     )
 
-    for ax, (values, label) in zip(axes, components):
-        ax.plot(fill.index, values, linewidth = .9)
-        ax.set_ylabel(label)
-        ax.grid(alpha = .25)
+    for row, (values, label) in enumerate(components, start = 1):
+        fig.add_trace(
+            go.Scatter(
+                x = fill.index,
+                y  = values,
+                mode = "lines",
+                name = label,
+                line = {"width": 1.5},
+                hovertemplate = (
+                    "%{x|%d %b %Y}<br>"
+                    "%{y:.2f}"
+                    "<extra%{fullData.name}</extra"
+                ),
+            ),
+            row = row,
+            col = 1,
+        )
 
-    axes[-1].set_xlabel("Date")
-    fig.suptitle("STL decompostion of reservoir fill level")
+        fig.update_yaxes(
+            title_text = label,
+            row = row,
+            col = 1,
+        )
+
+    fig.update_layout(
+        title = "STIL decomposition of reservoir filling",
+        height = 820,
+        showlegend = False
+    )
+
     return fig
 
 #plot for spectrogram
@@ -74,29 +101,44 @@ def plot_fill_spectrogram(fill, window_length = 208, window_overlap = 156):
         padded = False
     )
 
-    dates = fill.index[0] + pd.to_timedelta(weeks * 7, unit = "D")
-    cycles_per_year = frequncies * 52
-
-    fig, ax = plt.subplots(figsize = (10, 5), layout = "constrained")
-    
+    dates = fill.index[0] + pd.to_timedelta(weeks * 7, unit = "D") 
     #to be able to see the plot more clearer i have added a dB scale so it is easier to see variation on the higher frequencies
     magnitude = np.abs(coefficients)
     peak = magnitude.max()
     reference = peak if peak > 0 else 1.0
     magnitude_db = 20 * np.log10(np.maximum(magnitude / reference, 1e-12))
     
-    mesh = ax.pcolormesh(dates, frequncies * 52, magnitude_db, shading = "auto", vmin = -60, vmax = 0)
-   
+    fig = go.Figure(
+       go.Heatmap(
+           x = dates,
+           y = frequncies * 52,
+           z = magnitude_db,
+           zmin = -60,
+           zmax = 0,
+           colorbar = {"title": "Magnitude (dB)"},
+           hovertemplate = (
+                "%{x|%d %b %Y}<br>"
+                "%{y:.2f} cycle pr year"
+                "%{z:.1f} dB"
+                "<extra></extra"
+            ),
+       )
+   )
 
-    #marking the frequency of one cycle pr year
-    ax.axhline(1, color = "white", linestyle = "--", label = "Anual cycle")
-    ax.set(
-        title = "Resercoir fill spectrogram",
-        xlabel = "Date",
-        ylabel = "Frequency"
+    #mark one cycle pr year
+    fig.add_hline(
+        y = 1,
+        line_dash = "dash",
+        annotation_text = "annual cycle",
+        annotation_position = "top left",
     )
-    ax.legend()
-    fig.colorbar(mesh, ax = ax, label = "STFT magnitude")
+
+    fig.update_layout(
+        title = "Reservoir filling spectrogram",
+        height = 500,
+        xaxis_title = "Date",
+        yaxis_title = "Frequency (cycles pr year)",
+    )
     return fig
 
 stl_tab, spectogram_tab = st.tabs(["STL", "Spectrogram"])
@@ -111,8 +153,7 @@ with stl_tab:
         st.warning("Both smooting windows has to be odd")
     else:
         fig = plot_fill_stl(fill, seasonal, trend, robust)
-        st.pyplot(fig)
-        plt.close(fig)
+        st.pyplot_chart(fig, use_container_width = True, theme = "streamlit",)
 
 with spectogram_tab:
     window = st.number_input("Window length", min_value = 2, max_value = len(fill), value = min(208, len(fill)),)
@@ -122,5 +163,4 @@ with spectogram_tab:
         st.warning("Window overlap must be shorter than window length")
     else:
         fig = plot_fill_spectrogram(fill, window, overlap)
-        st.pyplot(fig)
-        plt.close(fig)
+        st.pyplot_chart(fig, use_container_width = True, theme = "streamlit",)

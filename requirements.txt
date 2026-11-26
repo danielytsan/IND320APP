@@ -9,4 +9,4 @@ scipy
 statsmodels
 geopandas
 scikit-learn
-plotly.express
+plotly
