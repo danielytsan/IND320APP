@@ -73,7 +73,7 @@ else:
         x = "Date",
         y = selected_column,
         color = "Area label",
-        renger_mode = "webgl",
+        rendar_mode = "webgl",
         labels = {"Area label": "Region"},
     )
 
