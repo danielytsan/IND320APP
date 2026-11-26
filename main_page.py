@@ -107,7 +107,8 @@ def load_prices(zone, day):
 
     #checks that intervals cover the entire day without gaps and overlaps
     contiguous = (prices["start"].iloc[1:].reset_index(drop = True) == prices["end"].iloc[:-1].reset_index(drop = True)).all()
-    hours = prices["end"] - prices["start"].dt.total_seconds() / 3600
+    duration = prices["end"] - prices["start"]
+    hours = duration.dt.total_seconds() / 3600
 
     return float((prices["NOK_per_kWh"] * hours).sum() / hours.sum())
 
