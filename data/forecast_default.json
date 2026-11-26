@@ -1,0 +1,14 @@
+{
+  "status": "validated",
+  "region_validated": "NO3",
+  "configuration_name": "Linear 3, 4 lags, rate 0.02",
+  "horizon_weeks": 13,
+  "validation_mae_pp": 7.380425785275763,
+  "settings": {
+    "model": "river_linear",
+    "history_years": 3,
+    "lag_count": 4,
+    "learning_rate": 0.02,
+    "l2": 0.001
+  }
+}
