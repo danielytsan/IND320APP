@@ -78,4 +78,4 @@ else:
     )
 
 fig.update_layout(title = "Resercoir data", height = 550,)
-st.plotly_chart(fig, use_container_width = True, theme = "streamlit,")
+st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
