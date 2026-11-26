@@ -51,25 +51,43 @@ st.session_state["mongo_client"] = get_mongo_data()
 #loading data and caching from open meteo
 @st.cache_data
 def load_weather(area, shapefile, start_date, end_date):
-    area_type, _, area_number = area.partition(" ")
-    zone = f"NO{area_number}"
-    zones = gpd.read_file(shapefile)
-    labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
-    selected = zones.loc[labels.eq(zone)]
-    
-    combined = zones.dissolve().to_crs(3035)
+    area_type, _, area_number = area.strip().upper().partition(" ")
+    number = int(area_number)
+
+    #fixing area selecton from feedback
+    #elevtricity areas:
+    if area_type == "EL" and number in range(1, 6):
+        zones = gpd.read_file(shapefile)
+        #shapefile uses label like no 3, removing spaces so they become no3
+        labels = zones["budomr"].str.replace(r"\s+", "", regex = True)
+        selected = zones.loc[labels.eq(f"NO{area_number}")]
+
+    elif area_type == "VASS" and number in (1, 2, 3):
+        zones.gpd.read_file("data/NVE_Region/NVE_region.shp", encoding = "uft-8",)
+        region_codes = {
+                    1: ["RS", "RØ"],
+                    2: ["RV"],
+                    3: ["RM", "RN"],
+                }
+        labels = zones["REGION"].astype(str).str.strip().str.upper()
+        selected = zones.loc[labels.isin(region_codes[number])].copy()
+
+    elif area_type == "NO" and number == 0:
+        selected = gpd.read_file(shapefile)
+
+
+    combined = selected[["geometry"]].dissolve().to_crs(3035)
     candidates = combined.geometry.sample_points(size = 1000, random_state = 42)
     point = candidates.to_crs(4326).iloc[0].geoms[0]
 
-    #requst hour ERA5 data for the first sample point
-    variables = ["temperature_2m", "precipitation", "snowfall"]
+    #requst hour ERA5 data
     response = requests.get(st.secrets["open_meteo"], 
                             params = {
                                 "latitude": point.y,
                                 "longitude": point.x,
                                 "start_date": start_date.isoformat(),
                                 "end_date": end_date.isoformat(),
-                                "hourly": ",".join(variables),
+                                "hourly": "temperature_2m,precipitation,snowfall",
                                 "models": "era5",
                                 "timezone": "GMT"
                             }, timeout = 30)
