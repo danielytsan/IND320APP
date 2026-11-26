@@ -190,7 +190,7 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
 def show_results(fig, summary, outliers):
     st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
     st.subheader("Summary statistics")
-    st.dataframe(summary.to_fram("Value"))
+    st.dataframe(summary.to_frame("Value"))
     st.subheader("Flagged observations")
     st.dataframe(outliers)
 
