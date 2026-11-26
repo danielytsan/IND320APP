@@ -60,7 +60,7 @@ with right:
         key = "_map_date",
     )
 
-    if color_by == "Weahter property":
+    if color_by == "Weather property":
         property_name = st.selectbox("Weather property", ["Temperature", "Precipitation", "Snowfall"],)
 
 #loading the geojson for the chosen area type
@@ -149,7 +149,7 @@ else:
 if low == high:
     low, high = low - 0.5, high + 0.5
 
-legend_name = property_name if color_by == "Weahter property" else color
+legend_name = property_name if color_by == "Weather property" else color_by
 legend = LinearColormap(
     color,
     vmin = low,
