@@ -53,7 +53,7 @@ if selected_column == "All columns":
     #changing from wide to long format
     long_data = filtered_df.melt(
         id_vars = ["Date", "Area label"],
-        values_vars = numeric_columns,
+        value_vars = numeric_columns,
         var_name = "Variable",
         value_name = "Value",
     )
