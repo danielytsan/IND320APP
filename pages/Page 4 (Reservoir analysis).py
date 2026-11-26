@@ -153,7 +153,7 @@ with stl_tab:
         st.warning("Both smooting windows has to be odd")
     else:
         fig = plot_fill_stl(fill, seasonal, trend, robust)
-        st.pyplot_chart(fig, use_container_width = True, theme = "streamlit",)
+        st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
 
 with spectogram_tab:
     window = st.number_input("Window length", min_value = 2, max_value = len(fill), value = min(208, len(fill)),)
@@ -163,4 +163,4 @@ with spectogram_tab:
         st.warning("Window overlap must be shorter than window length")
     else:
         fig = plot_fill_spectrogram(fill, window, overlap)
-        st.pyplot_chart(fig, use_container_width = True, theme = "streamlit",)
+        st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
