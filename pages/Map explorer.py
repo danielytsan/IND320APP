@@ -70,7 +70,7 @@ area_ids = [feature["properties"]["area_id"] for feature in geojson["features"]]
 #keeping the previous selection if it belongs to the area type
 if st.session_state.get("reservoir_area") not in area_ids:
     st.session_state["resercoir_area"] = "EL 3" if "EL 3" in area_ids else area_ids[0]
-selected_area = st.session_stat["resercoir_area"]
+selected_area = st.session_state["reservoir_area"]
 
 
 #weather is aggregated over seven days ending on the selected date
