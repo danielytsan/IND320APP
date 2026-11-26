@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import plotly.express as px
 
 st.set_page_config(page_title = "Cross-border Flows", initial_sidebar_state = "expanded")
-st.tilte("Cross-border electricity flows")
+st.title("Cross-border electricity flows")
 
 #loding the data from main page and checking if it is available
 if "mongo_client" not in st.session_state:
