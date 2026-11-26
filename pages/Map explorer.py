@@ -215,6 +215,8 @@ folium.GeoJson(
     interactive = False,
 ).add_to(map_object)
 
+#showing hte color scale
+legend.add_to(map_object)
 result = st_folium(
     map_object,
     key = f"map_{area_type}",
