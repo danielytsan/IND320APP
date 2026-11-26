@@ -72,16 +72,16 @@ def load_areas(area_type):
             "RN": "VASS 3",
         })
 
-        areas = areas[["area_id", "geometry"]].dissolve(by = "area_id").to_crs(4326)
+    areas = areas[["area_id", "geometry"]].dissolve(by = "area_id").to_crs(4326)
 
-        #select one stable point inside each area for weather data
-        points = areas.geometry.representative_point()
-        areas["latitude"] = points.y
-        areas["longitude"] = points.x
-        areas["area_id"] = areas.index
+    #select one stable point inside each area for weather data
+    points = areas.geometry.representative_point()
+    areas["latitude"] = points.y
+    areas["longitude"] = points.x
+    areas["area_id"] = areas.index
 
-        #convert to geojson
-        return json.loads(areas.to_json())
+    #convert to geojson
+    return json.loads(areas.to_json())
 st.session_state["load_areas"] = load_areas
 
 def utc_period(start_date, end_date):
