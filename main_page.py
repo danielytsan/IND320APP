@@ -130,7 +130,7 @@ def load_weather(area, shapefile, start_date, end_date):
                                 "latitude": location["latitude"],
                                 "longitude": location["longitude"],
                                 "start_date": start_date.isoformat(),
-                                "end_date": end - pd.Timedelta(seconds = 1).date().isoformat(),
+                                "end_date": (end - pd.Timedelta(seconds = 1)).date().isoformat(),
                                 "hourly": "temperature_2m,precipitation,snowfall",
                                 "models": "era5",
                                 "timezone": "GMT"
