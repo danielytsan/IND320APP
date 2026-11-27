@@ -10,9 +10,36 @@ from pymongo.server_api import ServerApi
 #configuring the page
 st.set_page_config(page_title = "Main page", initial_sidebar_state = "expanded")
 
-st.title("Reservoirs Data")
-st.header("This is the main page")
-st.write("Welcome to the main page of my streamlit app on the left side you can navigate between the pages I hope you enjoy the app and find it useful")
+def home():
+    st.title("This is the main page of the streamlit app")
+
+    st.write("Explore Norwegian resercoirs, weather and electricity data.")
+
+    st.markdown("""
+        - **Eplore:**
+        - **Analysis:**
+        - **Prediction:**
+    """)
+
+pages = {"":[
+    st.Page(home, title ="Home", default = True,),
+    ],
+
+    "Explore": [
+        st.Page("pages/Map explorer.py", title = "Map and area selection",),
+        st.Page("pages/Data overview.py", title = "Reservoir data overview",),
+        st.Page("pages/Cross-boarder flow.py", title = "Cross-boarder electricity flows",),
+    ],
+
+    "Analysis": [
+        st.Page("pages/Reservoir analysis.py", title = "Reservoir analysis",),
+        st.Page("pages/Weather analysis.py", title = "Weather anomalies",),
+        st.Page("pages/Weather and reservoir correlation.py", title = "Weather and reservoirs",),
+    ],
+}
+
+selected_page = st.navigation(pages, position = "sidebar", expanded = True,)
+selected_page.run()
 
 #loading the data and caching
 @st.cache_data
