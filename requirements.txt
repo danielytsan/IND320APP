@@ -9,3 +9,7 @@ scipy
 statsmodels
 geopandas
 scikit-learn
+plotly
+folium
+streamlit-folium
+river

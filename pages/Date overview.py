@@ -1,4 +1,5 @@
 import streamlit as st
+import plotly.express as px
 import pandas as pd
 
 st.set_page_config(page_title = "Rescervoirs Data", initial_sidebar_state = "expanded")
@@ -42,28 +43,39 @@ start_month, end_month = st.select_slider(
 date_month = df["Date"].dt.strftime("%Y-%m")
 
 filtered_df = df[
-    date_month.between(start_month, end_month) & (df["Area"] == select_area)
+    date_month.between(start_month, end_month) & (df["Area"].eq(select_area))
 ].copy()
 
 #plot all numeric columns or selected column
 if selected_column == "All columns":
-    plot_data = (
-        filtered_df
-        .set_index("Date")
-        .select_dtypes(include = "number")
+    numeric_columns = filtered_df.select_dtypes(include = "number").columns.tolist()
+
+    #changing from wide to long format
+    long_data = filtered_df.melt(
+        id_vars = ["Date", "Area label"],
+        value_vars = numeric_columns,
+        var_name = "Variable",
+        value_name = "Value",
     )
 
-    st.line_chart(plot_data, x_label = "Date", y_label = "Value")
-
-else: 
-    columns_to_plot = list(
-        dict.fromkeys(["Date", "Area label", selected_column])
+    fig = px.line(
+        long_data,
+        x = "Date",
+        y = "Value",
+        color = "Variable",
+        line_group = "Area label",
+        hover_data = ["Area label"],
+        render_mode = "webgl",
     )
-
-    st.line_chart(
-        filtered_df[columns_to_plot],
+else:
+    fig = px.line(
+        filtered_df,
         x = "Date",
         y = selected_column,
-        x_label = "Date",
-        y_label = "Value"
+        color = "Area label",
+        render_mode = "webgl",
+        labels = {"Area label": "Region"},
     )
+
+fig.update_layout(title = "Resercoir data", height = 550,)
+st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)

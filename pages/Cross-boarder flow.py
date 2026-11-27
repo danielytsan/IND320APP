@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 import matplotlib.pyplot as plt
+import plotly.express as px
 
 st.set_page_config(page_title = "Cross-border Flows", initial_sidebar_state = "expanded")
-
-st.header("Here you can read more about the data and the project")
+st.title("Cross-border electricity flows")
 
 #loding the data from main page and checking if it is available
 if "mongo_client" not in st.session_state:
@@ -37,23 +37,29 @@ with left:
     connections = st.radio("Select connection",options = sorted(df_flows["country"].dropna().unique()))
     year = st.selectbox("Select year", options = sorted(df_flows["date"].dt.year.dropna().unique()))
 
-    selected_data_f = df_flows[(df_flows["country"] == connections) & (df_flows["date"].dt.year == year)].copy()
+    selected_data_f = df_flows.loc[df_flows["country"].eq(connections) & df_flows["date"].dt.year.eq(year)].copy()
     #Convert MW to MWh: assumes every observation covers 1 hour
     selected_data_f["flow_MWh"] = selected_data_f["flow_mw"] * 1
     total_flows = selected_data_f.groupby("direction")["flow_MWh"].sum()
 
-    fig, ax = plt.subplots(figsize=(5, 5))
-    
-    total_flows.plot.pie(autopct='%1.1f%%', 
-                        startangle=90, 
-                        figsize=(5, 5), 
-                        title=f"Total Flows between Norway and {connections} in {year}")
+    fig = px.pie(
+        names = total_flows.index,
+        values = total_flows.values,
+        title = f"Norway - {connections} flows in {year}",
+    )
 
+    fig.update_traces(
+        textinfo = "percent+label",
+        hovertemplate = (
+            "%{label} <br>"
+            "%{value:,.0f} MWh <br>"
+            "%{percent:.1%}"
+            "<extra></extra>"
+        ),
+    )
 
-    ax.set_ylabel("")
-    fig.tight_layout()
-    st.pyplot(fig)
-    plt.close(fig)
+    fig.update_layout(height = 460)
+    st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
 
 
 
@@ -88,35 +94,30 @@ with right:
     else:
         month_numbers = [months[month] for month in selected_month]
 
-        selected_data = df_flows[(df_flows["country"] == connections) 
-                                 & (df_flows["date"].dt.year == year) 
-                                 & (df_flows["date"].dt.month.isin(month_numbers))].copy()
+        selected_data = df_flows[df_flows["country"].eq(connections) 
+                                 & df_flows["date"].dt.year.eq(year) 
+                                 & df_flows["date"].dt.month.isin(month_numbers)].copy()
 
         if selected_data.empty:
             st.info("No data available for the selected connection")
         else:
             #plotting the flows
-            fig, ax = plt.subplots(figsize=(16, 10))
+            fig = px.line(
+                selected_data.sort_values("date"),
+                x = "date",
+                y = "flow_mw",
+                color = "direction",
+                title = f"Norway - {connections} flows in {year}",
+                labels = {
+                    "date": "Date (Europe/Oslo)",
+                    "flow_mw": "Flow (MW)",
+                    "direction": "Direction",
+                },
+                render_mode = "webgl",
+            )
 
-            for (country, direction), group in selected_data.groupby(["country", "direction"]):
-                group = group.sort_values("date")
-                ax.plot(
-                    group["date"], 
-                    group["flow_mw"], 
-                    label=f"{country} - {direction}",
-                    linewidth=.8
-                )
-
-            ax.set_title(f"Norway cross-border flows with {connections} in {year}")
-            ax.set_xlabel("Date")
-            ax.set_ylabel("Flow (MW)")
-            ax.legend()
-            ax.grid()
-
-            fig.autofmt_xdate()
-            fig.tight_layout()
-            st.pyplot(fig)
-            plt.close(fig) 
+            fig.update_layout(height = 460)
+            st.plotly_chart(fig, use_container_width = True, theme = "streamlit",)
                     
         
 #adding expander

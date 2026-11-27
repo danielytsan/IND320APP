@@ -5,12 +5,25 @@ primaryColor = "#4d6069"
 backgroundColor = "#cae0d9"
 font = "'Times New Roman', serif"
 
+chartCategoricalColors = [
+    "#4D6069",
+    "#27766B",
+    "#A66A28",
+    "#705788",
+    "#3A6E95",
+    "#A9434A",
+]
+
+chartSequentialColors = [
+    "#F0F6F3",
+    "#9AC1B5",
+    "#4E8D7C",
+    "#213D43",
+]
+
 [client]
 showSidebarNavigation = true
 
 [theme.sidebar]
 
-base = "light"
-primaryColor = "#4d6069"
 backgroundColor = "#cae0d9"
-font = "'Times New Roman', serif"
