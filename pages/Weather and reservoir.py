@@ -80,7 +80,7 @@ def sliding_correlation(weekly, property_name, target_name, lag_weeks, window_we
     #restrict the comparison to the selected analysis period
     result = result.loc[pd.Timestamp(start_date):pd.Timestamp(end_date)]
     #no correlation in the first window weeks
-    result["Correlation"] = result[target_name].rolling(window_weeks, min_periods = window_weeks).corr(result[property_name].replay([np.inf, -np.inf, np.nan]))
+    result["Correlation"] = result[target_name].rolling(window_weeks, min_periods = window_weeks).corr(result[property_name]).replay([np.inf, -np.inf, np.nan])
 
     return result
 
