@@ -190,7 +190,7 @@ fig = make_subplots(
     cols = 1,
     shared_xaxes = True,
     vertical_spacing = 0.08,
-    subplot_title = [
+    subplot_titles = [
         target_name,
         f"{property_name}: lagged {lag_weeks} weeks",
         f"Sliding correlation: {window_weeks} - week window", 
