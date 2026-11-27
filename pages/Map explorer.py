@@ -51,14 +51,8 @@ with right:
     today = pd.Timestamp.now(tz = "Europe/Oslo").date()
 
     #historical deafult allows for era5 publication delats
-    default_day = min(reservoir["Date"].max().date(), today - timedelta(days = 7),)
-    selected_day = st.date_input(
-        "Date",
-        value = default_day,
-        min_value = date(1995, 1, 1),
-        max_value = today,
-        key = "_map_date",
-    )
+    default_day = st.session_state.get("map_end_date", min(reservoir["Date"].max().date(), today - timedelta(days = 7),),)
+    selected_day = st.session_state("reservoir_area")
 
     if color_by == "Weather property":
         property_name = st.selectbox("Weather property", ["Temperature", "Precipitation", "Snowfall"],)
