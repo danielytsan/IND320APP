@@ -57,7 +57,7 @@ def weekly_data(reservoir, weather, area):
         for week, count in grouped.count().items():
             start = week.start_time.tz_localize("Europe/Oslo")
             #localise midnight to include DST changes
-            end = week.start_time + pd.Timedelta(days = 7).tz_localize("Europe/Oslo")
+            end = (week.start_time + pd.Timedelta(days = 7)).tz_localize("Europe/Oslo")
             expected = int((end - start) / pd.Timedelta(hours = 1))
 
             if count != expected:
