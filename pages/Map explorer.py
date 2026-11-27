@@ -21,7 +21,7 @@ reservoir = st.session_state["df"].copy()
 reservoir["Date"] = pd.to_datetime(reservoir["Date"])
 reservoir["Area label"] = reservoir["Area"] + " " + reservoir["Area number"].astype(int).astype(str)
 
-#using tabs
+#making selectbox on the right and left side so user can select which data to display
 left, right = st.columns(2)
 
 with left:
@@ -71,7 +71,6 @@ area_ids = [feature["properties"]["area_id"] for feature in geojson["features"]]
 if st.session_state.get("reservoir_area") not in area_ids:
     st.session_state["reservoir_area"] = "EL 3" if "EL 3" in area_ids else area_ids[0]
 selected_area = st.session_state["reservoir_area"]
-
 
 #weather is aggregated over seven days ending on the selected date
 week_start = selected_day - timedelta(days = 6)
@@ -167,7 +166,7 @@ for feature in geojson["features"]:
         feature["properties"]["fill"] = legend(value)
     else:
         feature["properties"]["value"] = "no data"
-        feature["properties"]["value"] = "#9CA3AF"
+        feature["properties"]["fill"] = "#9CA3AF"
 
 #creating the map using folium
 map_object = folium.Map(
