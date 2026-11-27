@@ -1,3 +1,13 @@
+# IND320 APP
+
+- [GitHub repository](https://github.com/danielytsan/IND320APP)
+- [Streamlit app](https://ind320app-s2bytfwvqxbzmwkxrm2aze.streamlit.app)
+- [Jupyter Notebook](notebooks/Part2.ipynb)
+
+
+# Project structure
+
+```text
 IND320APP/
 ├── main_page.py
 ├── requirements.txt
@@ -34,3 +44,4 @@ IND320APP/
     ├── Weather analysis.py
     ├── Weather and reservoir correlation.py
     └── Forecasting.py
+```
