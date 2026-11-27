@@ -12,7 +12,7 @@ st.title("Weather and reservoir correlation")
 #using the data, selected area and weather loader
 required = ["df", "reservoir_area", "load_weather"]
 if any(name not in st.session_state for name in required):
-    st.inf("Open main page, then select an area on the map or reservoir page")
+    st.info("Open main page, then select an area on the map or reservoir page")
     st.stop()
 
 area = st.session_state["reservoir_area"]
