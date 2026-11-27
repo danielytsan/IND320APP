@@ -64,7 +64,7 @@ def weekly_data(reservoir, weather, area):
                 values.loc[week] = np.nan
 
         #converting the weekly periods to sunday date labels (matching magasinstatistikk)
-        values.index = values.index.to_timestam(how = "end").normalize()
+        values.index = values.index.to_timestamp(how = "end").normalize()
         weekly_weather[name] = values
 
     #joining weather and reservoir observation by their weekly dates
