@@ -16,7 +16,7 @@ if any(name not in st.session_state for name in required):
     st.stop()
 
 area = st.session_state["reservoir_area"]
-reservoir = st.seassion_state["df"]
+reservoir = st.session_state["df"]
 load_weather = st.session_state["load_weather"]
 st.caption(f"Selected area: {area}")
 
