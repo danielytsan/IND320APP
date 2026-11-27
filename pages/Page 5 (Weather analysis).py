@@ -1,8 +1,8 @@
-import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 import streamlit as st
 import plotly.graph_objects as go
+import requests
 from scipy.fft import dct, idct
 from scipy.stats import median_abs_deviation
 from sklearn.neighbors import LocalOutlierFactor
@@ -27,14 +27,21 @@ if area is None:
 
 st.caption(f"Selected resercoir area: {area}")
 shapefile = "data/Budområder/Budområder.shp"
+weather_properties = {
+    "Temperature": ("temperature_2m", "C"),
+    "Precipitation": ("precipitation", "mm"),
+    "Snowfall": ("snowfall", "cm"),
+}
 
 #making a function for plotting precipitation outliers
-def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
-    data = weather[["time", "precipitation"]].copy()
+def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3, property_name = "Temperature",):
+    #selecting the colum and unit for the property
+    column, unit = weather_properties[property_name]
+    data = weather[["time", column]].copy()
     data["time"] = pd.to_datetime(data["time"], utc = True)
 
     #sort timestamps so it is in chronological order
-    precipitation = (data.groupby("time")["precipitation"].mean().sort_index())
+    precipitation = (data.groupby("time")[column].mean().sort_index())
     values = precipitation.to_numpy(dtype = float)
 
     #romwing low frequencies
@@ -55,7 +62,7 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
     flagged = above | below
 
     outliers = pd.DataFrame({
-        "Precipitation": values[flagged],
+        property_name: values[flagged],
         "Lower limit": lower[flagged],
         "Upper limit": upper[flagged],
         "Direction": np.where(above[flagged], "Above", "Below"),
@@ -77,7 +84,7 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
             x = precipitation.index,
             y = values, 
             mode = "lines",
-            name = "Hourly precipitation",
+            name = f"Hourly {property_name.lower()}",
             line = {"width": 1.2},
         )
     )
@@ -117,18 +124,20 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3):
     )
 
     fig.update_layout(
-        title = "Hourly precipitation with robust SPC limits",
+        title = f"Hourly {property_name.lower()} with robust SPC limits",
         height = 480,
         xaxis_title = "Time",
-        yaxis_title = "Precimitation (mm/h)",
+        yaxis_title = f"{property_name} ({unit})",
     )
     return fig, summary, outliers
 
 #making a function to plot temp outliers
-def plot_temperature_outliers(weather, outlier_proportion = 0.01):
-    data = weather[["time", "temperature_2m"]].copy()
+def plot_temperature_outliers(weather, outlier_proportion = 0.01, property_name = "Temperature",):
+    #selecting the colum and unit for the property
+    column, unit = weather_properties[property_name]
+    data = weather[["time", column]].copy()
     data["time"] = pd.to_datetime(data["time"], utc = True)
-    temperature = data.groupby("time")["temperature_2m"].mean().sort_index()
+    temperature = data.groupby("time")[column].mean().sort_index()
     values = temperature.to_numpy(dtype = float)
 
     lof = LocalOutlierFactor(n_neighbors = min(20, len(values) - 1), contamination = outlier_proportion)
@@ -136,7 +145,7 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
     scores = -lof.negative_outlier_factor_
 
     outliers = pd.DataFrame({
-        "Temperature": values[flagged],
+        property_name: values[flagged],
         "LOF score": scores[flagged],
     }, index = temperature.index[flagged])
 
@@ -155,7 +164,7 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
             x = temperature.index,
             y = values,
             mode = "lines",
-            name = "Hourly temperature",
+            name = f"Hourly {property_name.lower()}",
             line = {"width": 1.2},
         )
     )
@@ -163,7 +172,7 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
     fig.add_trace(
         go.Scattergl(
             x = outliers.index,
-            y = outliers["Temperature"],
+            y = outliers[property_name],
             mode = "markers",
             name = "LOF anomalies",
             marker = {"size": 7, "symbol": "diamond",},
@@ -172,7 +181,7 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
             customdata = outliers["LOF score"].to_numpy(),
             hovertemplate = (
                 "%{x|%d %b %Y %H:%M}<br>"
-                "%{y:.2f} C<br>"
+                "%{y:.2f} "+ unit + "<br>"
                 "LOF score %{customdata:.3f}"
                 "<extra></extra>"
             ),
@@ -180,10 +189,10 @@ def plot_temperature_outliers(weather, outlier_proportion = 0.01):
     )
 
     fig.update_layout(
-        title = "Hourly temp with LOF anomalies",
+        title = f"Hourly {property_name.lower()} with LOF anomalies",
         height = 480,
         xaxis_title = "Time",
-        yaxis_title = "Temperature",
+        yaxis_title = f"{property_name} ({unit})",
     )
     return fig, summary, outliers
 
@@ -205,12 +214,15 @@ st.caption(f"Hourly ERA5 at one location ({latitude:.3f}, {longitude:.3f})")
 spc_tab, lof_tab = st.tabs(["Outlier / SPC", "Anomaly /LOF"])
 
 with spc_tab: 
+    spc_property = st.selectbox("Weather property", list(weather_properties), index = 0, key = "spc_property")
     cutoff_days = st.number_input("DCT cutoff period", min_value = 1, value = 30)
     n_std = st.number_input("Robust standard deviations", min_value = 0.1, value = 3.0)
-    show_results(*plot_precipitation_outliers(weather, cutoff_days, n_std))
+    show_results(*plot_precipitation_outliers(weather, cutoff_days, n_std, property_name = spc_property))
 
 with lof_tab:
+    #spearate key makes this selector independen of the spc selector
+    lof_property = st.selectbox("weather property", list(weather_properties), index = 0, key = "lof_property",)
     percent = st.number_input("Expected outliers (%)", min_value = 0.1, max_value = 50.0, value = 1.0)
-    show_results(*plot_temperature_outliers(weather, percent / 100))
+    show_results(*plot_temperature_outliers(weather, percent / 100, property_name = lof_property))
         
 
