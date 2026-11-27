@@ -29,7 +29,9 @@ properties = {
 def weekly_data(reservoir, weather, area):
     data = reservoir.copy()
     labels = data["Area"] + " " + data["Area number"].astype(int).astype(str)
-    fill = data.loc[labels.eq(area)].groupby("Date")["Fill level"].mean().sort_index().asfreq("W-SUN") * 100
+    sub = data.loc[labels.eq(area)].copy()
+    sub["Date"] = pd.to_datetime(sub["Date"], utc = True).dt.tz_localize(None).dt.normalize()
+    fill = sub.groupby("Date")["Fill level"].mean().sort_index().resample("W-SUN").mean() * 100
     data = weather.copy()
     data["time"] = pd.to_datetime(data["time"], utc = True)
     data = data.drop_duplicates("time").sort_values("time")
