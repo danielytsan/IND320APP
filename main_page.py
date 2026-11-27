@@ -16,9 +16,9 @@ def home():
     st.write("Explore Norwegian resercoirs, weather and electricity data.")
 
     st.markdown("""
-        - **Eplore:**
-        - **Analysis:**
-        - **Prediction:**
+        - **Eplore:** Reservoir data overview, Cross-boarder electricity flows, and Map and area selection
+        - **Analysis:** Reservoir analysis, Weather anomalies, and Weather and reservoir correlation
+        - **Prediction:** Forecasting of water magazine filling
     """)
 
 pages = {"":[
