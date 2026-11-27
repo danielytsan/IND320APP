@@ -21,30 +21,8 @@ def home():
         - **Prediction:** Forecasting of water magazine filling
     """)
 
-pages = {"":[
-    st.Page(home, title ="Home", default = True,),
-    ],
 
-    "Explore": [
-        st.Page("pages/Map explorer.py", title = "Map and area selection",),
-        st.Page("pages/Date overview.py", title = "Reservoir data overview",),
-        st.Page("pages/Cross-boarder flow.py", title = "Cross-boarder electricity flows",),
-    ],
-
-    "Analysis": [
-        st.Page("pages/Reservoir analysis.py", title = "Reservoir analysis",),
-        st.Page("pages/Weather analysis.py", title = "Weather anomalies",),
-        st.Page("pages/Weather and reservoir correlation.py", title = "Weather and reservoirs",),
-    ],
-
-    "Prediction": [st.Page("pages/Forecasting.py", title = "Forcasting of water magazine filling",),],
-}
-
-selected_page = st.navigation(pages, position = "sidebar", expanded = True,)
-selected_page.run()
-
-#loading the data and caching
-@st.cache_data
+@st.cache_data(ttl = 3600, max_entries = 1, show_spinner = "Loading reservoir data…")
 def get_data():
     #importing data form magasinstatistikk through API url and converting it into a pandas dataframe
     response = requests.get(st.secrets["magasinstatistikk_url"], timeout = 30)
@@ -69,7 +47,8 @@ def get_data():
 
 st.session_state["df"] = get_data()
 
-@st.cache_resource
+
+@st.cache_resource(show_spinner = "Preparing the database connection…")
 def get_mongo_data():
     uri = f"mongodb+srv://open_for_all:{st.secrets['db_password']}@cluster0.esy9giu.mongodb.net/"
 
@@ -79,7 +58,8 @@ def get_mongo_data():
 
 st.session_state["mongo_client"] = get_mongo_data()
 
-@st.cache_data
+
+@st.cache_data(max_entries = 3, show_spinner = "Loading area boundaries…")
 def load_areas(area_type):
     if area_type in ("EL", "NO"):
         areas = gpd.read_file("data/Budområder/Budområder.shp")
@@ -122,7 +102,7 @@ def utc_period(start_date, end_date):
 
 st.session_state["utc_period"] = utc_period
 
-@st.cache_data
+@st.cache_data(ttl = 3600, max_entries = 256, show_spinner = "Loading electricity prices…")
 def load_prices(zone, day):
     #finding api on hvakosterstrommen.no
     url = "https://www.hvakosterstrommen.no/api/v1/prices/"f"{day:%Y}/{day:%m-%d}_{zone}.json"
@@ -143,8 +123,8 @@ def load_prices(zone, day):
 
 st.session_state["load_prices"] = load_prices
 
-#loading data and caching from open meteo
-@st.cache_data
+#cacheing each weather request for one day.
+@st.cache_data(ttl = 86400, max_entries = 32, show_spinner = "Loading weather data…")
 def load_weather(area, shapefile, start_date, end_date):
     features = load_areas(area.split()[0])["features"]
     location = next(
@@ -172,3 +152,25 @@ def load_weather(area, shapefile, start_date, end_date):
     return weather, location["latitude"], location["longitude"]
 
 st.session_state["load_weather"] = load_weather
+
+pages = {"":[
+    st.Page(home, title = "Home", default = True,),
+    ],
+
+    "Explore": [
+        st.Page("pages/Map explorer.py", title = "Map and area selection",),
+        st.Page("pages/Date overview.py", title = "Reservoir data overview",),
+        st.Page("pages/Cross-boarder flow.py", title = "Cross-boarder electricity flows",),
+    ],
+
+    "Analysis": [
+        st.Page("pages/Reservoir analysis.py", title = "Reservoir analysis",),
+        st.Page("pages/Weather analysis.py", title = "Weather anomalies",),
+        st.Page("pages/Weather and reservoir correlation.py", title = "Weather and reservoirs correlation",),
+    ],
+
+    "Prediction": [st.Page("pages/Forecasting.py", title = "Forcasting of water magazine filling",),],
+}
+
+selected_page = st.navigation(pages, position = "sidebar", expanded = True,)
+selected_page.run()
