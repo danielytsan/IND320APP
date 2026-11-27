@@ -256,4 +256,4 @@ st.caption(f"ERA5 at one location {latitude:.3f}, {longitude:.3f} inside {area}.
 
 #allwing inspoection of the exact values used in the comparison
 with st.expander("weekly values used in the comparison"):
-    st.datafram(result, width = "stretch")
+    st.dataframe(result, width = "stretch")
