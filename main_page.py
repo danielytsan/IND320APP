@@ -126,6 +126,10 @@ st.session_state["load_prices"] = load_prices
 #cacheing each weather request for one day.
 @st.cache_data(max_entries = 32, show_spinner = "Loading weather data…")
 def load_weather(area, shapefile, start_date, end_date):
+    if response.status_code == 429:
+        st.warning("The api limit has been reached, sorry for that")
+        st.stop()
+    response.raise_for_status()
     features = load_areas(area.split()[0])["features"]
     location = next(
         feature["properties"]
