@@ -27,7 +27,7 @@ pages = {"":[
 
     "Explore": [
         st.Page("pages/Map explorer.py", title = "Map and area selection",),
-        st.Page("pages/Data overview.py", title = "Reservoir data overview",),
+        st.Page("pages/Date overview.py", title = "Reservoir data overview",),
         st.Page("pages/Cross-boarder flow.py", title = "Cross-boarder electricity flows",),
     ],
 
