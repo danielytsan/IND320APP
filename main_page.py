@@ -36,6 +36,8 @@ pages = {"":[
         st.Page("pages/Weather analysis.py", title = "Weather anomalies",),
         st.Page("pages/Weather and reservoir correlation.py", title = "Weather and reservoirs",),
     ],
+
+    "Prediction": [st.Page("pages/Forecasting.py", title = "Forcasting of water magazine filling",),],
 }
 
 selected_page = st.navigation(pages, position = "sidebar", expanded = True,)
