@@ -124,7 +124,7 @@ def load_prices(zone, day):
 st.session_state["load_prices"] = load_prices
 
 #cacheing each weather request for one day.
-@st.cache_data(ttl = 86400, max_entries = 32, show_spinner = "Loading weather data…")
+@st.cache_data(ttl = 7 * 24 * 60 * 60, max_entries = 32, show_spinner = "Loading weather data…")
 def load_weather(area, shapefile, start_date, end_date):
     features = load_areas(area.split()[0])["features"]
     location = next(
