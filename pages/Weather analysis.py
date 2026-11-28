@@ -116,7 +116,7 @@ def plot_precipitation_outliers(weather, cutoff_days = 30, n_std = 3, property_n
     fig.add_trace(
         go.Scattergl(
             x = outliers.index,
-            y = outliers["Precipitation"],
+            y = outliers[property_name],
             mode = "markers",
             name = "Outliers",
             marker = {"size": 7, "symbol": "diamond",},
